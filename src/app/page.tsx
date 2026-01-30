@@ -1,5 +1,6 @@
+import { Card } from "@/components/card";
 import { Section } from "@/components/section";
-import { ArchiveIcon } from "lucide-react";
+import { ArchiveIcon, MessageCircleIcon, ThumbsUpIcon } from "lucide-react";
 
 export default function Home() {
   return (
@@ -20,9 +21,29 @@ export default function Home() {
 
           {/* Content */}
           <Section.Content>
-            <div className="">Card 1</div>
-            <div className="">Card 2</div>
-            <div className="">Card 3</div>
+            <Card.Root>
+              <Card.Header>
+                <Card.Number>ECO-001</Card.Number>
+                <Card.Title>Implementar cartao de credito</Card.Title>
+              </Card.Header>
+              <Card.Footer>
+                <button
+                  type="button"
+                  className="text-navy-100 flex items-center gap-2 rounded-lg px-2.5 py-1 bg-navy-600 cursor-pointer"
+                >
+                  <ThumbsUpIcon className="size-3" />
+                  <span className="text-sm">12</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="text-navy-100 flex items-center gap-2 rounded-lg px-2.5 py-1 bg-navy-600 cursor-pointer"
+                >
+                  <MessageCircleIcon className="size-3" />
+                  <span className="text-sm">4</span>
+                </button>
+              </Card.Footer>
+            </Card.Root>
           </Section.Content>
         </Section.Root>
       </main>
