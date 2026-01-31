@@ -1,9 +1,22 @@
+"use client";
+
 import { Input } from "@/components/input";
 import { LogInIcon, SearchIcon } from "lucide-react";
+import { debounce, parseAsString, useQueryState } from "nuqs";
+import { ChangeEvent } from "react";
 
 export function Header() {
+  const [search, setSearch] = useQueryState("q", parseAsString.withDefault(""));
+
+  function handleSearchUpdate(event: ChangeEvent<HTMLInputElement>) {
+    setSearch(event.target.value, {
+      // Limita as requests feitas na url para nao sobrecarregar a API (valor da url so muda apos 0.5s depois de digitar)
+      limitUrlUpdates: event.target.value !== "" ? debounce(500) : undefined,
+    });
+  }
+
   return (
-    <div className="max-w-[900px] mx-auto w-full flex items-center justify-between">
+    <div className="max-w-225 mx-auto w-full flex items-center justify-between">
       <div className="space-y-1">
         <h1 className="font-semibold text-xl">Product Roadmap</h1>
         <p className="text-sm text-navy-100">
@@ -17,7 +30,9 @@ export function Header() {
           <Input
             type="text"
             placeholder="Search for features..."
-            className="w-[270px] pl-8"
+            className="w-67.5 pl-8"
+            value={search}
+            onChange={handleSearchUpdate}
           />
         </div>
 
