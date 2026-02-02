@@ -26,6 +26,7 @@ export function UserButton() {
           onClick={handleSignOut}
           className="size-8 rounded-full overflow-hidden cursor-pointer"
         >
+          {/*eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={session.user.image ?? ""}
             alt={session.user.name}
