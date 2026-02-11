@@ -1,12 +1,10 @@
 import { ThumbsUpIcon } from "lucide-react";
 import type { IssueInteractionsResponseSchema } from "@/api/routes/schemas/issue-interactions";
 import { Button } from "./button";
-import { ComponentProps } from "react";
+import { ComponentProps, MouseEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleLike } from "@/http/toggle-like";
 import { z } from "zod";
-import { issueLikes } from "@/api/db/schema";
-import { previousDay } from "date-fns/fp";
 
 interface LikeButtonProps extends ComponentProps<"button"> {
   issueId: string;
@@ -26,16 +24,16 @@ export function LikeButton({
 }: LikeButtonProps) {
   const queryClient = useQueryClient();
 
-  const { mutate: handleToggleLike, isPending } = useMutation({
+  const { mutate: onToggleLike, isPending } = useMutation({
     mutationFn: () => toggleLike({ issueId }),
     onMutate: async () => {
-      const previousData = queryClient.getQueryData<IssueInteractionsResponse>([
-        "issue-likes",
-        issueId,
-      ]);
+      const previousData =
+        queryClient.getQueriesData<IssueInteractionsResponse>({
+          queryKey: ["issue-likes"],
+        });
 
-      queryClient.setQueryData<IssueInteractionsResponse>(
-        ["issue-likes", issueId],
+      queryClient.setQueriesData<IssueInteractionsResponse>(
+        { queryKey: ["issue-likes"] },
         (old) => {
           if (!old) {
             return undefined;
@@ -64,15 +62,21 @@ export function LikeButton({
     },
     onError: async (_err, _params, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData<IssueInteractionsResponse>(
-          ["issue-likes", issueId],
-          context.previousData,
-        );
+        for (const [queryKey, data] of context.previousData) {
+          queryClient.setQueryData<IssueInteractionsResponse>(queryKey, data);
+        }
       }
     },
   });
 
   const liked = initialLiked;
+
+  function handleToogleLike(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation(); // Vai fazer com que o click tenha efeito apenas no componnete clicado e nao nos outrous componnetes acima dele
+
+    onToggleLike();
+  }
 
   return (
     <Button
@@ -80,7 +84,7 @@ export function LikeButton({
       className="data-[liked=true]:bg-indigo-600 data-[liked=true]:text-white data-[liked=true]:hover:bg-indigo-500"
       aria-label={liked ? "Unlike" : "Like"}
       disabled={isPending}
-      onClick={() => handleToggleLike()}
+      onClick={handleToogleLike}
       {...props}
     >
       <ThumbsUpIcon className="size-3" />
