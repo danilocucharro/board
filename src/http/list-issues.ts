@@ -6,6 +6,7 @@ interface ListIssuesParams {
 }
 
 export async function listIssues({ search }: ListIssuesParams) {
+  "use cache"; // por padrao esses dados vai ficar cacheados po 15min
   const url = new URL("/api/issues", clientEnv.NEXT_PUBLIC_API_URL);
 
   if (search) {

@@ -29,7 +29,6 @@ export function BoardContent({ issues }: BoardContentProps) {
       queryFn: () => getIssueInteractions({ issuesIds: allIssuesIds }),
     },
   );
-  console.log({ interactionsData });
 
   const interactions = useMemo(() => {
     if (!interactionsData) {
